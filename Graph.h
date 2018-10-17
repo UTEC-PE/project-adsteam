@@ -11,6 +11,8 @@
 #include <fstream>
 #include <string>
 #include <set>
+#include <limits>
+#include <algorithm>
 #include "disjoint.h"
 
 using namespace std;
@@ -27,6 +29,10 @@ struct Edge
     char start;
     char final;
     int weight;
+    void printEdge()
+    {
+        cout << "{" << start << "," << final << "}" << endl;
+    }
 
 };
 
@@ -129,6 +135,71 @@ public:
         }
         edges--;
     };
+
+    Edge findMinimumEdge(vector<char> &VisitedVertex)
+    {
+        int min = numeric_limits<int>::max(); //Infinity
+        Edge MinEdge;
+        for(int i = 0; i < VisitedVertex.size(); i++)
+        {
+            for (int j = 0; j < graphmap[VisitedVertex[i]].size(); ++j) {
+                if(graphmap[VisitedVertex[i]][j].weight < min &&
+                   count(VisitedVertex.begin(), VisitedVertex.end(), graphmap[VisitedVertex[i]][j].final ) == 0)
+                {
+                    min = graphmap[VisitedVertex[i]][j].weight;
+                    MinEdge = graphmap[VisitedVertex[i]][j];
+                }
+            }
+        }
+        VisitedVertex.push_back(MinEdge.final);
+        return MinEdge;
+    }
+
+    Edge findSmallestEdge(vector<char> &VisitedVertex)
+    {
+        int min = numeric_limits<int>::max(); //Infinity
+        Edge MinEdge;
+
+        for (auto f: graphmap)
+        {
+            for(auto j: f . second)
+            {
+                if(j.weight < min && count(VisitedVertex.begin(), VisitedVertex.end(), j.final) == 0)
+                {
+                    min = j.weight;
+                    MinEdge = j;
+                }
+            }
+        }
+        VisitedVertex.push_back(MinEdge.final);
+        return MinEdge;
+    }
+
+    void primAlgorithm(char StartingPoint)
+    {
+        vector<char> VisitedVertex;
+        vector<Edge> MST;
+        while(VisitedVertex.size() != vertices)
+            MST.push_back(findMinimumEdge(VisitedVertex));
+        cout << "{";
+        for (auto &i : MST) {
+            i.printEdge();
+        }
+        cout << "}";
+    }
+
+    void kruskalAlgorithm()
+    {
+        vector<char> VisitedVertex;
+        vector<Edge> MST;
+        while(VisitedVertex.size() != vertices)
+            MST.push_back(findSmallestEdge(VisitedVertex));
+        cout << "{";
+        for (auto &i : MST) {
+            i.printEdge();
+        }
+        cout << "}";
+    }
 
 
     void removeNode(char start){
