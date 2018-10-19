@@ -11,6 +11,7 @@
 #include <fstream>
 #include <string>
 #include <set>
+#include <stack>
 #include <limits>
 #include <algorithm>
 #include "disjoint.h"
@@ -48,26 +49,14 @@ private:
     int edges;
     bool dir;
 
-    bool depth(char start, char final, set<char>& my_set){
-
-        bool i= false; //si no encuentra nada, deberá devolver falso
-        my_set.insert(start); //inserta el nodo start para no volver a visitarlo
-        if (start==final) return true; //si estás en el que buscas, retornas true
-        for (auto f: graphmap[start]){ //f es cada nodo conectado a tu start
-            auto it = my_set.find(f.final); //busca si el nodo conectado ya ha sido visitado
-            if (it == my_set.end()) i= depth(f.final, final, my_set); //si no ha sido visitado, visitar
-            if (i) break; //si el nodo visitado devolvio true, deja de buscar y retorna true.
-        } //si se acaban los hijos o estas en un ciclo, deja de moverte y retorna el valor i por defecto (false).
-        return i;
-    };
 
 public:
 
-    Graph()
+    Graph(bool direccionado=true)
     {
         vertices= 0;
         edges=0;
-        dir= true;
+        dir= direccionado;
 
     };
 
@@ -75,51 +64,57 @@ public:
     {
         edges = 0;
 
-        Document.open("graphStart.txt"); //Abrimos el archivo que va a tener este nombre
-        vector<string> datum; //Aqui van a ir todas los numeros que diga el archivo.
-        string word; //Cada uno de los datos
+        Document.open("graphStart.txt");
+        vector<string> datum;
+        string word;
         word.clear();
 
         while (Document >> word)
         {
-            datum.push_back(word); //Transforma los string en numero y los pone en el datum
-        } //Mientras hayan palabras en el documento. Leera cada una y la pushback en el vector de datos.
+            datum.push_back(word);
+        }
 
         dir = stoi(datum[1]);
         vertices = stoi(datum[0]);
+
         int j = 3;
 
         for(int i = 0; i < vertices; i++)
         {
             addEdge(datum[j].c_str()[0], datum[j+1].c_str()[0], stoi(datum[j+2]));
-            //There might be a more efficient way of doing this.
             j += 3;
         }
     }
 
-    //Primero insertas nodos, luego los conectas. No es simultáneo.
+    void printGraph(){
+        for (auto pair: graphmap){
+            cout << pair.first << ": ";
+            for (auto edge: pair.second){
+                cout << " ";
+                edge.printEdge();
+                cout << " ";
+            }
+            cout << endl;
+        }
+    }
 
-    void insertNode(char start){
-
+    void insertNode(char node){
         vector<Edge> edges;
-        auto pair= make_pair(start, edges);
+        auto pair= make_pair(node, edges);
         graphmap.insert(pair);
         vertices++;
-
     };
 
     void addEdge(char start, char final, int weight) {
         Edge edge{start, final, weight};
 
-        //asume que es direccionado
         if (graphmap.count( start ) && graphmap.count( final )) {
-
-            if (graphmap[start].empty()) {
-                graphmap[start].push_back(edge);
-            } else {
-                graphmap[start].push_back(edge);
+            graphmap[start].push_back(edge);
+            if(!dir) {
+                Edge edge2{final, start, weight};
+                graphmap[final].push_back(edge2);
+                edges++;
             }
-
             edges++;
         }
         else{
@@ -128,17 +123,65 @@ public:
     };
 
     void removeEdge(char start, char final){
-        int i=0;
-        for (auto f: graphmap[start]){
-            if(f.final==final) graphmap[start].erase(graphmap[start].begin()+i);
-            i++;
+
+        int counter=0;
+        for (auto edge: graphmap[start]){
+            if(edge.final==final) graphmap[start].erase(graphmap[start].begin()+counter);
+            counter++;
         }
         edges--;
+        if(!dir){
+            for (auto edge: graphmap[final]){
+                if(edge.final==start) graphmap[final].erase(graphmap[final].begin()+counter);
+                counter++;
+            }
+            edges--;
+        }
+
+    };
+
+    void removeNode(char start){
+        if (dir){
+            graphmap.erase(start);
+            vertices--;
+            for (auto pair: graphmap){
+                auto node= pair.first;
+                removeEdge(node, start);
+            }
+        }
+        else{
+            for (auto edge: graphmap[start]){
+                auto connectedNode= edge.final;
+                removeEdge(connectedNode, start);
+            }
+            graphmap.erase(start);
+            vertices--;
+        }
+
+    };
+
+    bool findVertex(char vertex){
+        for (auto pair : graphmap){
+            if (pair.first== vertex){
+                return true;
+            }
+        }
+        return false;
+
+    };
+    bool findEdge(char start, char final){
+        if (findVertex(start) && findVertex(final)){
+            for (auto edge: graphmap[start]){
+                if (edge.final== final) return true;
+            }
+        }
+        return false;
+
     };
 
     Edge findMinimumEdge(vector<char> &VisitedVertex)
     {
-        int min = numeric_limits<int>::max(); //Infinity
+        int min = numeric_limits<int>::max();
         Edge MinEdge;
         for(int i = 0; i < VisitedVertex.size(); i++)
         {
@@ -153,6 +196,20 @@ public:
         }
         VisitedVertex.push_back(MinEdge.final);
         return MinEdge;
+    }
+
+
+    void primAlgorithm(char StartingPoint)
+    {
+        vector<char> VisitedVertex;
+        vector<Edge> MST;
+        while(VisitedVertex.size() != vertices)
+            MST.push_back(findMinimumEdge(VisitedVertex));
+        cout << "{";
+        for (auto &i : MST) {
+            i.printEdge();
+        }
+        cout << "}";
     }
 
     Edge findSmallestEdge(vector<char> &VisitedVertex)
@@ -175,18 +232,6 @@ public:
         return MinEdge;
     }
 
-    void primAlgorithm(char StartingPoint)
-    {
-        vector<char> VisitedVertex;
-        vector<Edge> MST;
-        while(VisitedVertex.size() != vertices)
-            MST.push_back(findMinimumEdge(VisitedVertex));
-        cout << "{";
-        for (auto &i : MST) {
-            i.printEdge();
-        }
-        cout << "}";
-    }
 
     void kruskalAlgorithm()
     {
@@ -201,147 +246,217 @@ public:
         cout << "}";
     }
 
+    bool isConnected(){
+        DisjointSet disjointSet;
 
-    void removeNode(char start){
-
-        graphmap.erase(start);
-        vertices--;
-
-        for (auto f: graphmap){
-        removeEdge(f.first, start);
+        for (auto pair: graphmap){
+            auto vertex= pair.first;
+            disjointSet.makeSet(vertex);
         }
 
-
-
-    };
-    bool is_connected(){
-        //usar disjoint
-        DisjointSet my_set;
-
-        for (auto f: graphmap){
-            my_set.makeSet(f.first); //iniciar cada vertice como un nodo
-        }
-
-        for (auto f: graphmap){
-            for (auto i: f.second){ //unir cada edge, los que esten conectados apuntarán al mismo padre.
-                my_set.unionSet(i.start, i.final);
+        for (auto pair: graphmap){
+            for (auto edge: pair.second){
+                disjointSet.unionSet(edge.start, edge.final);
             }
         }
-
-        set check;
-        for (auto f: graphmap){ //acumula los padres de cada nodo
-            check.insert(my_set.get_Parent(f.first));
+        set<char> parents;
+        for (auto pair: graphmap){
+            auto vertex= pair.first;
+            parents.insert(disjointSet.getParent(vertex));
         }
-        return check.size()==1; //si solo hay un padre, es porque todos están conectados.
-
-    }
-
-    bool not_connected(){
-        return !is_connected();
-    }
-
-    //FALTA ESTO: ???
-    bool strong_connected(){
-        //primer enfoque: si hay conexión entre todos y A está conectado a todos, el camino es ida y vuelta.
-        if(is_connected()){
-            return (graphmap.begin()->second == vertices-1);
+        if(parents.size()==1){
+            cout << "Todos estan enlazados";
+            return true;
+        }else{
+            cout << "No están conectados";
+            return false;
         }
-        return false;
-        //segundo enfoque: Usar BFS o DFS para saber si están conectados en ambos sentidos.
+
     }
 
 
-    bool findVertex(char start){
-        for (auto f : graphmap){ //si el nodo ha sido inicializado...
-            if (f.first== start){
+    void depthSons(char start, set<char> &visitedNodes, stack<char> &stackClosedNodes){
+        visitedNodes.insert(start);
+        for (auto edge: graphmap[start]){
+            if (visitedNodes.find(edge.final)==visitedNodes.end()){
+                depthSons(edge.final, visitedNodes, stackClosedNodes);
+            }
+        }
+        stackClosedNodes.push(start);
+    };
+
+
+    bool isStronglyConnected(){
+        if (!dir){
+            cout << "Esta operacion solo es para grafos dirigidos" << endl;
+            return false;
+        }
+
+        if (isConnected()){
+            char startNode= (*(graphmap.begin())).first;
+            set<char> visitedNodes;
+            stack<char> stackClosedNodes;
+            for (auto pair: graphmap) {
+                auto currentNode= pair.first;
+                if(visitedNodes.find(currentNode) ==visitedNodes.end()) {
+                    depthSons(startNode, visitedNodes, stackClosedNodes);
+                }
+            }
+
+            vector<char> closedNodes;
+            while(!stackClosedNodes.empty()){
+                closedNodes.push_back(stackClosedNodes.top());
+                stackClosedNodes.pop();
+            }
+            DisjointSet disjointSet;
+
+            for (auto node: closedNodes){
+                disjointSet.makeSet(node);
+            }
+
+            for (auto vertex: closedNodes){
+                for (auto edge: graphmap[vertex]){
+                    disjointSet.unionSet(edge.final, edge.start);
+                }
+            }
+
+            set<char> parents;
+            for (auto node: closedNodes){
+                parents.insert(disjointSet.getParent(node));
+            }
+
+            if(parents.size()==1){
+                cout << "fuertemente conexo";
                 return true;
+            }else{
+                cout << "no es fuertemente conexo";
+                return false;
             }
+
         }
         return false;
-
-    };
-    bool findEdge(char start, char final){
-        if (findVertex(start)){ //si existe el nodo, busca
-            for (auto f: graphmap[start]){
-                if (f.final== final) return true;
-            }
-        }
-        return false;
-
     };
 
-    bool is_bipartite(){ //se puede dividir en dos conjuntos?
-        map<char, bool> my_map; //vamos a pintar cada nodo con false o true
-        for (auto f: graphmap){
-            auto pair= make_pair(f.first, NULL); //cada pareja empieza con NULL
-            my_map.insert(pair);
+
+
+
+    bool isBipartite(){
+        //grafos no conexos?
+        map<char, bool> nodeAndColor;
+        for (auto pair: graphmap){
+            auto newPair= make_pair(pair.first, NULL);
+            nodeAndColor.insert(newPair);
         }
-        my_map.begin()->second=true; //empezamos con true
-        for (auto f: graphmap){
-            for (auto i:f.second){
-                if (my_map[i.final]==NULL){ //si no ha sido visitado...
-                    my_map[i.final]= !my_map[i.first]; //ponerle el contrario (distinto color)
+        nodeAndColor.begin()->second=true;
+        auto start=  nodeAndColor.begin()->first;
+        vector<char> bfsNodes;
+        set<char> visitedNodes;
+        bfsNodes.push_back(start);
+
+        while(!bfsNodes.empty()){
+            auto current=*bfsNodes.begin();
+            for (auto edge: graphmap[current] ){
+                auto nextNode= edge.final;
+                if(nodeAndColor[nextNode]==NULL){
+                    nodeAndColor[nextNode]= !nodeAndColor[current];
                 }
-                else{ //si ha sido visitado y es igual al color del vecino, devuelve false
-                    if(my_map[i.final]== my_map[i.first]){return false; }
+                else{
+                    if(nodeAndColor[nextNode]==nodeAndColor[current]) return false;
+                }
+                if (visitedNodes.find(nextNode) == visitedNodes.end())
+                {
+                    bfsNodes.push_back(nextNode);
+                    visitedNodes.insert(nextNode);
                 }
             }
+            bfsNodes.erase(bfsNodes.begin());
         }
-        //si cada uno se puede pintar de color distinto al vecino, devuelve true.
         return true;
     }
 
+    bool depth(char currentNode, char final, set<char>& visitedNodes){
 
+        bool flag= false;
+        visitedNodes.insert(currentNode);
+        if (currentNode==final) return true;
+        for (auto edge: graphmap[currentNode]){
+            auto nextNode= edge.final;
+            if (visitedNodes.find(nextNode) == visitedNodes.end()) {
+                flag= depth(nextNode, final, visitedNodes);
+            }
+            if (flag) break;
+        }
+        return flag;
+    };
 
     bool DFS(char start, char final){
-        set<char> my_set; //crear un set donde vas a poner los nodos que vayas visitando.
-      return depth(start, final, my_set); //va a aplicar recursividad
+        set<char> visitedNodes;
+        return depth(start, final, visitedNodes);
     };
 
 
     bool BFS(char start, char final){
-        set<char> my_set; //inicializa un set de nodos visitados.
-        my_set.insert(start); //inserta el primer nodo
-        while(!my_set.empty()){ //mientras queden nodos por visitar, avanza
-            auto current= graphmap[*my_set.begin()]; //el primer nodo
-            for (auto f: current ){ //para cada hijo del nodo
-                if(f==final) return true; //si algún hijo es el final, retorna true
-                my_set.insert(f); //los hijos van a la cola
+        vector<char> bfsNodes;
+        set<char> visitedNodes;
+        bfsNodes.push_back(start);
+        visitedNodes.insert(start);
+
+        while(!bfsNodes.empty()){
+            auto current= *bfsNodes.begin();
+            for (auto edge: graphmap[current]){
+                auto nextNode= edge.final;
+
+                if(nextNode==final) return true;
+
+                if (visitedNodes.find(nextNode) == visitedNodes.end())
+                {
+                    bfsNodes.push_back(nextNode);
+                    visitedNodes.insert(nextNode);
+                }
             }
-            my_set.erase(my_set.begin());  //borramos el nodo que ha sido visitado, seguimos.
+            bfsNodes.erase(bfsNodes.begin());
         }
-        return false; //si has revisado a todos los descendientes y no hay nada, retorna false.
+        return false;
     };
 
 
     float density(){
-        //asumiendo dirigido
-        return (edges/(vertices*(vertices-1)));
+        return (float(edges)/float((vertices*(vertices-1))));
     }
     bool isDense(float x= 0.7){ //un valor por defecto
         return density()>x;
     }
-    bool isDispersed(float x= 0.7){ //un valor por defecto
+    bool isSparse(float x= 0.7){ //un valor por defecto
         return density()<x;
     }
 
-    int vertex_grade(char start){
+    int vertexGrade(char start){
         return graphmap[start].size();
     }
 
-    bool is_root(char start){  //solo nacen nodos de él?
-
-        //busca por todos los vectores. Si start no aparece como final ni una vez, retorna true
-        for (auto f: graphmap){
-            for (auto i: f.second){
-                if(i.final == start) return false;
+    bool isSource(char start){
+        if(dir) {
+            for (auto f: graphmap) {
+                for (auto i: f.second) {
+                    if (i.final == start) return false;
+                }
             }
+            return true;
         }
-        return true;
+        else{
+            cout << "Esta operacion es para grafos direccionados";
+            return false;
+        }
     }
 
-    bool is_leaf(char start){ //solo hay nodos hacia él?
-        return graphmap[start].empty(); //si no tiene nigun saliente, asumimos que sí.
+    bool isLeaf(char start){
+        if(dir) {
+            return graphmap[start].empty();
+        }
+        else{
+            cout << "Esta operacion es para grafos direccionados";
+            return false;
+        }
     }
 
 

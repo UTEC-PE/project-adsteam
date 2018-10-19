@@ -61,7 +61,7 @@ public:
         return current;
     }
 
-    char get_Parent(char data){
+    char getParent(char data){
         return (nodes[data]->parent)->data;
     }
 
