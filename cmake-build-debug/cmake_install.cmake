@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/Sebastian/Desktop/2018-2/ADS/Graph
+# Install script for directory: F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/Project")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/Graph")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -4,102 +4,85 @@
 	<Project>
 		<Option title="Graph"/>
 		<Option makefile_is_custom="1"/>
-		<Option compiler="msvc8"/>
+		<Option compiler="gcc"/>
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug"/>
+				<Option working_dir="F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 all"/>
-					<CompileFile command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 clean"/>
-					<DistClean command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="Graph">
-				<Option output="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug/Graph.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug"/>
+				<Option output="F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Graph.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
-				<Option compiler="msvc8"/>
+				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\ATLMFC\include"/>
-					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\include"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17134.0\ucrt"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17134.0\shared"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17134.0\um"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17134.0\winrt"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17134.0\cppwinrt"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 Graph"/>
-					<CompileFile command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 clean"/>
-					<DistClean command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 Graph"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="Graph/fast">
-				<Option output="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug/Graph.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug"/>
+				<Option output="F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Graph.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
-				<Option compiler="msvc8"/>
+				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\ATLMFC\include"/>
-					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\include"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17134.0\ucrt"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17134.0\shared"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17134.0\um"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17134.0\winrt"/>
-					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17134.0\cppwinrt"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../include"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include-fixed"/>
+					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 Graph/fast"/>
-					<CompileFile command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 clean"/>
-					<DistClean command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 Graph/fast"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug"/>
+				<Option working_dir="F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 edit_cache"/>
-					<CompileFile command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 clean"/>
-					<DistClean command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug"/>
+				<Option working_dir="F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 clean"/>
-					<DistClean command="nmake /NOLOGO /f C:\Users\Sebastian\Desktop\2018-2\ADS\Graph\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/edge.h">
-			<Option target="Graph"/>
-		</Unit>
-		<Unit filename="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/graph.h">
-			<Option target="Graph"/>
-		</Unit>
-		<Unit filename="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/main.cpp">
-			<Option target="Graph"/>
-		</Unit>
-		<Unit filename="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/node.h">
-			<Option target="Graph"/>
-		</Unit>
-		<Unit filename="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/read.h">
-			<Option target="Graph"/>
-		</Unit>
-		<Unit filename="C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/CMakeLists.txt">
+		<Unit filename="F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

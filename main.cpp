@@ -9,18 +9,16 @@ using namespace std;
 
 int main() {
 
-        Graph graph;
+        Graph graph(false);
         graph.insertNode('A');
         graph.insertNode('B');
         graph.insertNode('C');
         graph.insertNode('D');
-        //graph.insertNode('E');
         graph.addEdge('A', 'B', 6);
-        graph.addEdge('B', 'A', 1);
         graph.addEdge('C', 'D', 1);
         graph.addEdge('C', 'B', 1);
         graph.addEdge('D', 'B', 5);
-        Graph ciclo;
+        Graph ciclo(false);
         ciclo.insertNode('A');
         ciclo.insertNode('B');
         ciclo.insertNode('C');
@@ -44,17 +42,17 @@ int main() {
         */
 
 
-        ciclo.primAlgorithm('A');
-        cout << endl << endl;
-        ciclo.kruskalAlgorithm();
-        cout << endl << endl;
         graph.primAlgorithm('A');
         cout << endl << endl;
+
         graph.kruskalAlgorithm();
+        cout << endl << endl;
 
+        ciclo.primAlgorithm('A');
+        cout << endl << endl;
 
-
-
+        ciclo.kruskalAlgorithm();
+        cout << endl << endl;
 
         return 0;
 }
