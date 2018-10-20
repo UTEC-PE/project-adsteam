@@ -18,13 +18,6 @@
 
 using namespace std;
 
-/*El archivo que lee este grafo sigue el formato:
- * 11 1
- * 1 2 3
- * 1 3 5
- * O sea, hay 11 vertices, es True (1) que sea direccionado, el 1 conecta con 2 con un peso 3, con 3 con un peso 5.
-*/
-
 struct Edge
 {
     char start;
@@ -37,8 +30,6 @@ struct Edge
 
 };
 
-
-//asume que el grafo es direccionado
 
 class Graph
 {
@@ -56,15 +47,15 @@ public:
     {
         vertices= 0;
         edges=0;
-        dir= direccionado;
+        dir = direccionado;
 
     };
 
-    Graph(fstream Document)
+    Graph(fstream& Document)
     {
         edges = 0;
+        vertices = 0;
 
-        Document.open("graphStart.txt");
         vector<string> datum;
         string word;
         word.clear();
@@ -74,12 +65,19 @@ public:
             datum.push_back(word);
         }
 
+        int v = stoi(datum[0]);
         dir = stoi(datum[1]);
-        vertices = stoi(datum[0]);
 
-        int j = 3;
+        int n = stoi(datum[2]);
 
-        for(int i = 0; i < vertices; i++)
+        for(int k = 0; k < v; k++)
+        {
+            insertNode(datum[k + 3].c_str()[0]);
+        }
+
+        int j = v + 3;
+
+        for(int i = 0; i < n; i++)
         {
             addEdge(datum[j].c_str()[0], datum[j+1].c_str()[0], stoi(datum[j+2]));
             j += 3;
@@ -185,12 +183,11 @@ public:
         Edge MinEdge;
         for(int i = 0; i < VisitedVertex.size(); i++)
         {
-            for (int j = 0; j < graphmap[VisitedVertex[i]].size(); ++j) {
-                if(graphmap[VisitedVertex[i]][j].weight < min &&
-                   count(VisitedVertex.begin(), VisitedVertex.end(), graphmap[VisitedVertex[i]][j].final ) == 0)
+            for (int j = 0; j < graphmap[VisitedVertex[i]].size(); j++) {
+                if((graphmap[VisitedVertex[i]][j].weight < min) && (count(VisitedVertex.begin(), VisitedVertex.end(), graphmap[VisitedVertex[i]][j].final ) == 0))
                 {
-                    min = graphmap[VisitedVertex[i]][j].weight;
                     MinEdge = graphmap[VisitedVertex[i]][j];
+                    min = MinEdge.weight;
                 }
             }
         }
@@ -203,8 +200,12 @@ public:
     {
         vector<char> VisitedVertex;
         vector<Edge> MST;
+        VisitedVertex.push_back(StartingPoint);
         while(VisitedVertex.size() != vertices)
+        {
             MST.push_back(findMinimumEdge(VisitedVertex));
+        }
+
         cout << "{";
         for (auto &i : MST) {
             i.printEdge();
@@ -228,6 +229,7 @@ public:
                 }
             }
         }
+        if (VisitedVertex.size() == 0) VisitedVertex.push_back(MinEdge.start);
         VisitedVertex.push_back(MinEdge.final);
         return MinEdge;
     }
@@ -239,7 +241,7 @@ public:
         vector<Edge> MST;
         while(VisitedVertex.size() != vertices)
             MST.push_back(findSmallestEdge(VisitedVertex));
-        cout << "{";
+        cout << "{" << endl;
         for (auto &i : MST) {
             i.printEdge();
         }
@@ -374,7 +376,8 @@ public:
         return true;
     }
 
-    bool depth(char currentNode, char final, set<char>& visitedNodes){
+    bool depth(char currentNode, char final, set<char>& visitedNodes, vector<Edge>& tree){
+
 
         bool flag= false;
         visitedNodes.insert(currentNode);
@@ -382,30 +385,45 @@ public:
         for (auto edge: graphmap[currentNode]){
             auto nextNode= edge.final;
             if (visitedNodes.find(nextNode) == visitedNodes.end()) {
-                flag= depth(nextNode, final, visitedNodes);
+                Edge edge{currentNode, nextNode, edge.weight};
+                tree.push_back(edge);
+                flag= depth(nextNode, final, visitedNodes, tree);
             }
             if (flag) break;
         }
         return flag;
     };
 
-    bool DFS(char start, char final){
+    bool DFS(char start, char final, vector<Edge>& tree){
         set<char> visitedNodes;
-        return depth(start, final, visitedNodes);
+
+        return depth(start, final, visitedNodes, tree);
+    };
+
+    void print_DFS(char start, char final){
+        vector<Edge> tree;
+        DFS(start, final, tree);
+        for (auto f: tree){
+            f.printEdge();
+            cout << endl;
+        }
+
     };
 
 
-    bool BFS(char start, char final){
+    bool BFS(char start, char final, vector<Edge>& tree){
         vector<char> bfsNodes;
         set<char> visitedNodes;
         bfsNodes.push_back(start);
         visitedNodes.insert(start);
-
+        //Edge edge;
         while(!bfsNodes.empty()){
             auto current= *bfsNodes.begin();
             for (auto edge: graphmap[current]){
                 auto nextNode= edge.final;
-
+                //edge{current, nextNode, edge.weight};
+                Edge *tedge = new Edge{current, nextNode, edge.weight};
+                tree.push_back(*tedge);
                 if(nextNode==final) return true;
 
                 if (visitedNodes.find(nextNode) == visitedNodes.end())
@@ -418,6 +436,15 @@ public:
         }
         return false;
     };
+
+    void print_BFS(char start, char final){
+        vector<Edge> tree;
+        BFS(start, final, tree);
+        for (auto f: tree){
+            f.printEdge();
+            cout << endl;
+        }
+    }
 
 
     float density(){
