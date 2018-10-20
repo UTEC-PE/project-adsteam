@@ -1,3 +1,3 @@
-C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug/CMakeFiles/Graph.dir
-C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Sebastian/Desktop/2018-2/ADS/Graph/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/matte/Documents/GitHub/project-adsteam/cmake-build-debug/CMakeFiles/Project.dir
+C:/Users/matte/Documents/GitHub/project-adsteam/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/matte/Documents/GitHub/project-adsteam/cmake-build-debug/CMakeFiles/rebuild_cache.dir
