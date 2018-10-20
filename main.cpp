@@ -26,6 +26,11 @@ int main() {
         ciclo.addEdge('B', 'C', 5);
         ciclo.addEdge('C', 'A', 5);
 
+        fstream Document;
+        Document.open("graphStart.txt");
+        Graph Test(Document);
+
+
         /*probando delete
         graph.removeEdge('B', 'A');
         graph.printGraph();
@@ -53,6 +58,8 @@ int main() {
 
         ciclo.kruskalAlgorithm();
         cout << endl << endl;
+
+        Test.primAlgorithm('A');
 
         return 0;
 }

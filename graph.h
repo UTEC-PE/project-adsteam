@@ -18,13 +18,6 @@
 
 using namespace std;
 
-/*El archivo que lee este grafo sigue el formato:
- * 11 1
- * 1 2 3
- * 1 3 5
- * O sea, hay 11 vertices, es True (1) que sea direccionado, el 1 conecta con 2 con un peso 3, con 3 con un peso 5.
-*/
-
 struct Edge
 {
     char start;
@@ -37,8 +30,6 @@ struct Edge
 
 };
 
-
-//asume que el grafo es direccionado
 
 class Graph
 {
@@ -56,15 +47,15 @@ public:
     {
         vertices= 0;
         edges=0;
-        dir= direccionado;
+        dir = direccionado;
 
     };
 
-    Graph(fstream Document)
+    Graph(fstream& Document)
     {
         edges = 0;
+        vertices = 0;
 
-        Document.open("graphStart.txt");
         vector<string> datum;
         string word;
         word.clear();
@@ -74,12 +65,19 @@ public:
             datum.push_back(word);
         }
 
+        int v = stoi(datum[0]);
         dir = stoi(datum[1]);
-        vertices = stoi(datum[0]);
 
-        int j = 3;
+        int n = stoi(datum[2]);
 
-        for(int i = 0; i < vertices; i++)
+        for(int k = 0; k < v; k++)
+        {
+            insertNode(datum[k + 3].c_str()[0]);
+        }
+
+        int j = v + 3;
+
+        for(int i = 0; i < n; i++)
         {
             addEdge(datum[j].c_str()[0], datum[j+1].c_str()[0], stoi(datum[j+2]));
             j += 3;
