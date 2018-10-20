@@ -1,3 +1,3 @@
-F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/CMakeFiles/Graph.dir
-F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/CMakeFiles/edit_cache.dir
-F:/Universidad/Ciclo IV/Algoritmos y Estructuras de Datos/Proyecto Grafo/Primer Avance/project-adsteam/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/matte/Documents/GitHub/project-adsteam/cmake-build-debug/CMakeFiles/Project.dir
+C:/Users/matte/Documents/GitHub/project-adsteam/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/matte/Documents/GitHub/project-adsteam/cmake-build-debug/CMakeFiles/rebuild_cache.dir

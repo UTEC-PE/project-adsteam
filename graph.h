@@ -376,7 +376,8 @@ public:
         return true;
     }
 
-    bool depth(char currentNode, char final, set<char>& visitedNodes){
+    bool depth(char currentNode, char final, set<char>& visitedNodes, vector<Edge>& tree){
+
 
         bool flag= false;
         visitedNodes.insert(currentNode);
@@ -384,30 +385,45 @@ public:
         for (auto edge: graphmap[currentNode]){
             auto nextNode= edge.final;
             if (visitedNodes.find(nextNode) == visitedNodes.end()) {
-                flag= depth(nextNode, final, visitedNodes);
+                Edge edge{currentNode, nextNode, edge.weight};
+                tree.push_back(edge);
+                flag= depth(nextNode, final, visitedNodes, tree);
             }
             if (flag) break;
         }
         return flag;
     };
 
-    bool DFS(char start, char final){
+    bool DFS(char start, char final, vector<Edge>& tree){
         set<char> visitedNodes;
-        return depth(start, final, visitedNodes);
+
+        return depth(start, final, visitedNodes, tree);
+    };
+
+    void print_DFS(char start, char final){
+        vector<Edge> tree;
+        DFS(start, final, tree);
+        for (auto f: tree){
+            f.printEdge();
+            cout << endl;
+        }
+
     };
 
 
-    bool BFS(char start, char final){
+    bool BFS(char start, char final, vector<Edge>& tree){
         vector<char> bfsNodes;
         set<char> visitedNodes;
         bfsNodes.push_back(start);
         visitedNodes.insert(start);
-
+        //Edge edge;
         while(!bfsNodes.empty()){
             auto current= *bfsNodes.begin();
             for (auto edge: graphmap[current]){
                 auto nextNode= edge.final;
-
+                //edge{current, nextNode, edge.weight};
+                Edge *tedge = new Edge{current, nextNode, edge.weight};
+                tree.push_back(*tedge);
                 if(nextNode==final) return true;
 
                 if (visitedNodes.find(nextNode) == visitedNodes.end())
@@ -420,6 +436,15 @@ public:
         }
         return false;
     };
+
+    void print_BFS(char start, char final){
+        vector<Edge> tree;
+        BFS(start, final, tree);
+        for (auto f: tree){
+            f.printEdge();
+            cout << endl;
+        }
+    }
 
 
     float density(){
