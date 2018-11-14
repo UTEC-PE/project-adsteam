@@ -355,7 +355,7 @@ public:
             auto current=*bfsNodes.begin();
             for (auto edge: graphmap[current] ){
                 auto nextNode= edge.final;
-                if(nodeAndColor[nextNode]==NULL){
+                if(nodeAndColor[nextNode]== NULL){
                     nodeAndColor[nextNode]= !nodeAndColor[current];
                 }
                 else{
@@ -480,6 +480,78 @@ public:
             cout << "Esta operacion es para grafos direccionados";
             return false;
         }
+    }
+
+    void floydWarshall(){
+        map<char, map<char, int>> distanceMatrix;
+        map<char, map<char, char>> pathMatrix;
+        for (auto vertice:  graphmap){
+            map<char, int> vertice2;
+            map<char, char> vertice2b;
+
+            auto pair= make_pair(vertice.first, vertice2);
+            auto pairb= make_pair(vertice.first, vertice2b);
+            distanceMatrix.insert(pair);
+            pathMatrix.insert(pairb);
+
+            for (auto verticeB: graphmap){
+                map<char, int> temp;
+                int min = numeric_limits<int>::max();
+                auto pair2 = make_pair(verticeB.first, min);
+                auto pair2b= make_pair(verticeB.first, vertice.first);
+                distanceMatrix[vertice.first].insert(pair2);
+                pathMatrix[vertice.first].insert(pair2b);
+            }
+
+            distanceMatrix[vertice.first][vertice.first]= 0;
+            pathMatrix[vertice.first][vertice.first]= 'e';
+
+        }
+        for (auto vertice: graphmap){
+            for (auto neighbor: vertice.second){
+                distanceMatrix[vertice.first][neighbor.final]= neighbor.weight;
+            }
+        }
+
+        for (auto verticeI: graphmap){
+            for(auto verticeJ: graphmap){
+                for (auto verticeK: graphmap){
+
+                    auto sum= distanceMatrix[verticeJ.first][verticeI.first] + distanceMatrix[verticeI.first][verticeK.first];
+                    if(sum < distanceMatrix[verticeJ.first][verticeK.first]){
+                        distanceMatrix[verticeJ.first][verticeK.first]= sum;
+                        pathMatrix[verticeJ.first][verticeK.first] = verticeI.first;
+                    }
+                }
+            }
+        }
+    }
+
+    void bellmanFord(char v){
+
+        map<char, int> table;
+        auto firstPair= make_pair(v, 0);
+        table.insert(firstPair);
+        int inf= numeric_limits<int>::max();
+        //reemplazar por vertices alcanzables.
+
+        for (auto pair: graphmap){
+            if(pair.first!= v){
+                auto newPair= make_pair(pair.first, inf);
+            }
+        }
+
+        for (int i=0; i<vertices-1; i++){
+            for (auto vertex: table){
+
+                for(auto neighbor: graphmap[vertex.first]){
+                    if (vertex.second + neighbor.weight< table[neighbor.final]){
+                        table[neighbor.final]= vertex.second + neighbor.weight;
+                    }
+                }
+            }
+        }
+
     }
 
 
