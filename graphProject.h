@@ -301,23 +301,23 @@ public:
         cout << "}";
     }
 
-    /*bool isConnected()
+    bool isConnected()
     {
         DisjointSet disjointSet;
 
         for (auto pair: graphmap){
-            auto vertex = pair.first;
+            auto vertex = (pair.first)->name;
             disjointSet.makeSet(vertex);
         }
 
         for (auto pair: graphmap){
             for (auto edge: pair.second){
-                disjointSet.unionSet(edge.start, edge.final);
+                disjointSet.unionSet((edge.start)->name, (edge.final)->name);
             }
         }
-        set<NodeDisjoint> parents;
+        set<T> parents;
         for (auto pair: graphmap){
-            auto vertex = pair.first;
+            auto vertex = (pair.first)->name;
             parents.insert(disjointSet.getParent(vertex));
         }
         if(parents.size()==1){
@@ -327,79 +327,71 @@ public:
             cout << "No es un grafo conexo.";
             return false;
         }
-    }*/
+}
 
 
-    /*void depthSons(Node<T> * start, set<Node<T> *> &visitedNodes, stack<Node<T> *> &stackClosedNodes)
+    void depthSons(T start, set<T> &visitedNodes, stack<T> &stackClosedNodes)
     {
         visitedNodes.insert(start);
         for (auto edge: graphmap[start]){
-            if (visitedNodes.find(edge.final)==visitedNodes.end())
-            {
-                depthSons(edge.final, visitedNodes, stackClosedNodes);
+            if (visitedNodes.find((edge.final)->name)==visitedNodes.end()){
+                depthSons((edge.final)->name, visitedNodes, stackClosedNodes);
             }
         }
         stackClosedNodes.push(start);
-    };*/
+	};
 
 
-    /*bool isStronglyConnected()
-    {
-        if (!dir)
-        {
+	bool isStronglyConnected(){
+        if (!dir){
             cout << "Esta operacion solo es para grafos dirigidos" << endl;
             return false;
         }
 
-        if (isConnected())
-        {
-            Node<T> startNode = (*(graphmap.begin())).first;
-            set<Node<T>> visitedNodes;
-            stack<Node<T>> stackClosedNodes;
-            for (auto pair: graphmap) 
-            {
-                auto currentNode= pair.first;
-                if(visitedNodes.find(currentNode) ==visitedNodes.end()) 
-                {
+        if (isConnected()){
+            T startNode= ((*(graphmap.begin())).first)->name;
+            set<T> visitedNodes;
+            stack<T> stackClosedNodes;
+            for (auto pair: graphmap) {
+                auto currentNode= (pair.first)->name;
+                if(visitedNodes.find(currentNode) ==visitedNodes.end()) {
                     depthSons(startNode, visitedNodes, stackClosedNodes);
                 }
             }
 
-            vector<Node<T>> closedNodes;
-            while(!stackClosedNodes.empty())
-            {
+            vector<char> closedNodes;
+            while(!stackClosedNodes.empty()){
                 closedNodes.push_back(stackClosedNodes.top());
                 stackClosedNodes.pop();
             }
-
             DisjointSet disjointSet;
 
-            for (auto node: closedNodes)
+            for (auto node: closedNodes){
                 disjointSet.makeSet(node);
+            }
 
-            for (auto vertex: closedNodes)
-            {
-                for (auto edge: graphmap[vertex])
+            for (auto vertex: closedNodes){
+                for (auto edge: graphmap[vertex]){
                     disjointSet.unionSet(edge.final, edge.start);
+                }
             }
 
-            set<Node<T>> parents;
-            for (auto node: closedNodes)
+            set<char> parents;
+            for (auto node: closedNodes){
                 parents.insert(disjointSet.getParent(node));
-
-            if(parents.size()==1)
-            {
-                cout << "Fuertemente conexo";
-                return true;
             }
-            else
-            {
-                cout << "No es fuertemente conexo";
+
+            if(parents.size()==1){
+                cout << "fuertemente conexo";
+                return true;
+            }else{
+                cout << "no es fuertemente conexo";
                 return false;
             }
+
         }
         return false;
-    };*/
+	};
 
     bool isBipartite()
     {
@@ -553,6 +545,127 @@ public:
         }
     }
 
+    //Segunda Entrega de Projecto.
+
+    void bellmanFord(Node<T>* v){
+
+        map<Node<T>*, int> table;
+        set<Node<T>*> reach;
+        reach.insert(v);
+        bool flag=true;
+        int n;
+        while(flag){
+            n=reach.size();
+            for (auto i: reach){
+                for(auto j: graphmap[i]){
+                    reach.insert(j);
+                }
+            }
+            if(n==reach.size()){
+                flag=false;
+            }
+        }
+
+        auto firstPair= make_pair(v, 0);
+        table.insert(firstPair);
+        int inf= numeric_limits<int>::max();
+
+        for (auto pair: graphmap){
+            if(pair.first!= v && reach.count(pair.first)){
+                auto newPair= make_pair(pair.first, inf);
+                table.insert(newPair);
+            }
+        }
+
+        for (int i=0; i<vertices-1; i++){
+            for (auto vertex: table){
+                for(auto neighbor: graphmap[vertex.first]){
+                    if((vertex.second)!=inf){
+                    if (vertex.second + neighbor.weight< table[neighbor.final]){
+                        table[neighbor.final]= vertex.second + neighbor.weight;
+                    }
+                    }
+                }
+            }
+        }
+        cout << endl << "Matriz: " << endl;
+        for (auto f: table){
+            cout << f.first->name << ": " << f.second << endl;
+        }
+
+	}
+    
+	void floydWarshall(){
+        map<Node<T>*, map<Node<T>*, int>> distanceMatrix;
+        map<Node<T>*, map<Node<T>*, Node<T>*>> pathMatrix;
+        int inf;
+        for (auto vertice:  graphmap){
+            map<Node<T>*, int> vertice2;
+            map<Node<T>*, Node<T>*> vertice2b;
+
+            auto pair= make_pair(vertice.first, vertice2);
+            auto pairb= make_pair(vertice.first, vertice2b);
+            distanceMatrix.insert(pair);
+            pathMatrix.insert(pairb);
+
+
+            for (auto verticeB: graphmap){
+                map<Node<T>*, int> temp;
+                inf = numeric_limits<int>::max();
+                auto pair2 = make_pair(verticeB.first, min);
+                auto pair2b= make_pair(verticeB.first, vertice.first);
+                distanceMatrix[vertice.first].insert(pair2);
+                pathMatrix[vertice.first].insert(pair2b);
+            }
+
+            distanceMatrix[vertice.first][vertice.first]= 0;
+            pathMatrix[vertice.first][vertice.first]= nullptr;
+
+        }
+
+        for (auto vertice: graphmap){
+            for (auto neighbor: vertice.second){
+                distanceMatrix[vertice.first][neighbor.final]= neighbor.weight;
+            }
+        }
+
+
+        for (auto verticeI: graphmap){
+            for(auto verticeJ: graphmap){
+                for (auto verticeK: graphmap) {
+                    if (inf != distanceMatrix[verticeJ.first][verticeI.first] &&
+                        inf != distanceMatrix[verticeI.first][verticeK.first]) {
+                        auto sum = distanceMatrix[verticeJ.first][verticeI.first] +
+                                   distanceMatrix[verticeI.first][verticeK.first];
+                        if (sum < distanceMatrix[verticeJ.first][verticeK.first]) {
+                            distanceMatrix[verticeJ.first][verticeK.first] = sum;
+                            pathMatrix[verticeJ.first][verticeK.first] = verticeI.first;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        cout << "Distance: " << endl;
+        for (auto i: distanceMatrix){
+            cout << (i.first)->name << "| ";
+            for (auto j: i.second){
+                cout << (j.first)->name << ": "<< j.second;
+            }
+            cout << endl;
+        }
+        cout << endl;
+        cout <<"Path: " << endl;
+        for (auto i: pathMatrix){
+            cout << (i.first)->name << "| ";
+            for (auto j: i.second){
+                cout << (j.first)->name << ": "<< (j.second)->name;
+            }
+            cout << endl;
+        }
+
+}
 
     ~Graph()
     {
@@ -560,6 +673,7 @@ public:
         edges = 0;
         graphmap.clear();
     }
+
 };
 
 #endif //GRAPHPROJECT_H
