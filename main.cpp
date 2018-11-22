@@ -1,34 +1,64 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include "Graph.h"
+#include "graphProject.h"
 #include <vector>
 #include <map>
-using namespace std;
 
+int main() 
+{
 
-int main() {
+        Node<char> A('A',1,2);
+        Node<char> B('B',2,2);
+        Node<char> D('D',3,3);
 
-        Graph graph(false);
-        graph.insertNode('A');
-        graph.insertNode('B');
-        graph.insertNode('C');
-        graph.insertNode('D');
+        Edge<char> C(&A,&B,3);
+
+        Graph<char> TestGraph;
+        TestGraph.insertNode(&A);
+        TestGraph.insertNode(&B);
+        TestGraph.insertNode(&D);
+
+        TestGraph.addEdge(&A,&B,4);
+        TestGraph.removeEdge(&B,&A);
+        TestGraph.addEdge(&A,&D,7);
+
+        TestGraph.removeNode(&B);
+
+        TestGraph.printGraph();
+
+        cout << "Test de Find:" << endl;
+        if(TestGraph.findVertex(&A))
+            cout << "Se encontro A." << endl;
+        if(!(TestGraph.findVertex(&B)))
+            cout << "No se encontro B." << endl;
+
+        cout << "Test de Find Edge:" << endl;
+        if(TestGraph.findEdge(&A,&D))
+            cout << "Se encontro el Edge AD" << endl;
+        if(!TestGraph.findEdge(&D,&B))
+            cout << "No se encontro el Edge DB" << endl;
+
+        TestGraph.primAlgorithm(&A);
+        TestGraph.kruskalAlgorithm();
+
+        if(TestGraph.isBipartite())
+            cout << "Es Bipartito." << endl;
+        else
+            cout << "No es Bipartito" << endl;
+
+        /*graph.insertNode('A',1,1);
+        graph.insertNode('B',2,2);
+        graph.insertNode('C',3,3);
+        graph.insertNode('D',4,4);
         graph.addEdge('A', 'B', 6);
         graph.addEdge('C', 'D', 1);
         graph.addEdge('C', 'B', 1);
-        graph.addEdge('D', 'B', 5);
-        Graph ciclo(false);
-        ciclo.insertNode('A');
-        ciclo.insertNode('B');
-        ciclo.insertNode('C');
-        ciclo.addEdge('A', 'B', 5);
-        ciclo.addEdge('B', 'C', 5);
-        ciclo.addEdge('C', 'A', 5);
+        graph.addEdge('D', 'B', 5);*/
 
-        fstream Document;
-        Document.open("graphStart.txt");
-        Graph Test(Document);
+        //fstream Document;
+        //Document.open("graphStart.txt");
+        //Graph Test(Document);
 
 
         /*probando delete
@@ -45,21 +75,4 @@ int main() {
          cout << ciclo.density() << graph.density();
          cout << graph.vertexGrade('C') << graph.isLeaf('C') << graph.isSource('C');
         */
-
-
-        graph.primAlgorithm('A');
-        cout << endl << endl;
-
-        graph.kruskalAlgorithm();
-        cout << endl << endl;
-
-        ciclo.primAlgorithm('A');
-        cout << endl << endl;
-
-        ciclo.kruskalAlgorithm();
-        cout << endl << endl;
-
-        Test.primAlgorithm('A');
-
-        return 0;
 }
