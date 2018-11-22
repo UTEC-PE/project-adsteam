@@ -8,30 +8,30 @@
 #include <map>
 
 using namespace std;
-struct Node {
+struct NodeDisjoint {
     char rank;
     char data;
-    Node* parent;
+    NodeDisjoint * parent;
 
-    Node(char data) : data(data), rank(0), parent(this) {};
+    NodeDisjoint(char data) : data(data), rank(0), parent(this) {};
 };
 
 class DisjointSet {
 private:
-    map<char, Node *> nodes;
+    map<char, NodeDisjoint *> nodes;
 
 public:
 
     DisjointSet() {};
 
     void makeSet(char data) {
-        Node *node = new Node(data);
+        NodeDisjoint *node = new NodeDisjoint(data);
         this->nodes[data] = node;
     }
 
     bool unionSet(char data1, char data2) {
-        Node *parent1 = findSet(data1);
-        Node *parent2 = findSet(data2);
+        NodeDisjoint *parent1 = findSet(data1);
+        NodeDisjoint *parent2 = findSet(data2);
 
         if (parent1 != parent2) {
             if (parent1->rank >= parent2->rank) {
@@ -47,12 +47,12 @@ public:
         return false;
     }
 
-    Node *findSet(char data) {
+    NodeDisjoint *findSet(char data) {
         return findSet(this->nodes[data]);
     }
 
-    Node *findSet(Node *node) {
-        Node *current = node;
+    NodeDisjoint *findSet(NodeDisjoint *node) {
+        NodeDisjoint *current = node;
         while (current != current->parent) {
             current = current->parent;
         }
