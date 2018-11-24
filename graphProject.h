@@ -66,6 +66,32 @@ struct Edge
 
 template <typename T>
 
+struct Path
+{
+	vector<Edge<T>> edgePath;
+	int weight = 0;
+
+	Path(int weightSetup)
+	{
+		weight = weightSetup;
+	}
+
+	void calculateWeight()
+	{
+		for(int i = 0; i < edgePath.size(); i++)
+			weight += edgePath[i].weight;
+	};
+
+	void addEdge(Edge<T> edgeToPush)
+	{
+		edgePath.push_back(edgeToPush);
+		this.calculateWeight();
+	}
+
+};
+
+template <typename T>
+
 class Graph
 {
 private:
@@ -414,7 +440,7 @@ public:
             auto current = *bfsNodes.begin();
             for (auto edge: graphmap[current] ){
                 auto nextNode= edge.final;
-                if(nodeAndColor[nextNode]==NULL){
+                if(!(nodeAndColor[nextNode])){
                     nodeAndColor[nextNode] = !nodeAndColor[current];
                 }
                 else{
@@ -595,7 +621,8 @@ public:
 
 	}
     
-	void floydWarshall(){
+	void floydWarshall()
+	{
         map<Node<T>*, map<Node<T>*, int>> distanceMatrix;
         map<Node<T>*, map<Node<T>*, Node<T>*>> pathMatrix;
         int inf;
@@ -665,7 +692,74 @@ public:
             cout << endl;
         }
 
-}
+	}
+
+	void includeNode(vector<Node<T>*> & visitedNodes,  vector<Node<T>*> & nonVisitedNodes, Node<T> * nodeToInclude)
+	{
+		nonVisitedNodes.erase(remove(nonVisitedNodes.begin(), nonVisitedNodes.end(), nodeToInclude), nonVisitedNodes.end());
+		visitedNodes.push_back(nodeToInclude);
+	}
+
+	bool checkIfLess(vector<Node<T>*> & visitedNodes, Node<T> * nodeToCheck, map<Node<T> *, Path<T> *> shortestValueTables, int counter)
+	{
+		return (!(count(visitedNodes.begin(), visitedNodes.end(), graphmap[nodeToCheck][counter])) && (graphmap[nodeToCheck][counter].weight + (shortestValueTables[nodeToCheck]) -> weight) > shortestValueTables[graphmap[nodeToCheck][counter]]);
+	}
+
+	void updateTable(map<Node<T> *, Path<T> *> & shortestValueTables, Edge<T> edgeToAdd)
+	{
+		shortestValueTables[edgeToAdd.final] = shortestValueTables[edgeToAdd.start] -> addEdge(edgeToAdd);
+	}
+
+	void djikstraSmallestPath(vector<Node<T> *> visitedNodes, Node<T> * smallestNodeFound, map<Node<T> *, Path<T> *> & shortestValueTables)
+	{
+		for(int i = 0; i < graphmap[smallestNodeFound].size(); i++)
+		{
+			if(checkIfLess(visitedNodes, smallestNodeFound, shortestValueTables, i))
+				updateTable(shortestValueTables, graphmap[smallestNodeFound][i]);
+		}
+
+	}
+
+	Node<T> * calculateMinimum(map<Node<T> *, Path<T> *> shortestValueTables, vector<Node<T> *> nonVisitedNodes)
+	{
+		int min = numeric_limits<int>::max();
+		Node<T> * minNode = nullptr;
+		for(int i = 0; i < nonVisitedNodes.size(); ++i)
+		{
+			if(shortestValueTables[nonVisitedNodes[i]] -> weight < min)
+			{
+				min = shortestValueTables[nonVisitedNodes[i]];
+				minNode = nonVisitedNodes[i];
+			}
+		}
+
+		return minNode;
+	}
+
+	Path<T> djikstraAlgorithm(Node<T> * sourceNode, Node<T> *finalNode)
+	{
+		map<Node<T> *, Path<T> *> shortestValueTables;
+		vector<Node<T> *> visitedNodes;
+		vector<Node<T> *> nonVisitedNodes;
+
+		for (auto const &f: graphmap)
+        {
+        	shortestValueTables.first == f.first;
+        	nonVisitedNodes.push_back(f.first);
+        	shortestValueTables.second == new Path<T>(numeric_limits<int>::max());
+        }
+
+        includeNode(visitedNodes, nonVisitedNodes, sourceNode);
+        Node<T> * smallestNodeFound = sourceNode;
+
+        do
+        {
+        	djikstraSmallestPath(visitedNodes, smallestNodeFound, shortestValueTables);
+        	smallestNodeFound = calculateMinimum(shortestValueTables, nonVisitedNodes);
+        	includeNode(visitedNodes, nonVisitedNodes, smallestNodeFound);
+        }
+        while(smallestNodeFound);	
+	}
 
     ~Graph()
     {
