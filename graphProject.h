@@ -736,7 +736,7 @@ public:
 		return minNode;
 	}
 
-	Path<T> djikstraAlgorithm(Node<T> * sourceNode, Node<T> *finalNode)
+	Path<T> * djikstraAlgorithm(Node<T> * sourceNode, Node<T> *finalNode)
 	{
 		map<Node<T> *, Path<T> *> shortestValueTables;
 		vector<Node<T> *> visitedNodes;
@@ -759,6 +759,13 @@ public:
         	includeNode(visitedNodes, nonVisitedNodes, smallestNodeFound);
         }
         while(smallestNodeFound);	
+
+        return shortestValueTables[finalNode];
+	}
+
+	Path<T> aAsterisk(Node<T> * sourceNode, Node<T> * finalNode)
+	{
+
 	}
 
     ~Graph()
