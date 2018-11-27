@@ -10,6 +10,7 @@
 #include <stack>
 #include <limits>
 #include <algorithm>
+#include <math.h>
 #include "disjoint.h"
 
 using namespace std;
@@ -62,6 +63,37 @@ struct Edge
     {
         cout << "{" << start -> name << "," << final -> name << "}" << endl;
     }
+};
+
+template <typename T>
+
+struct Path
+{
+	vector<Edge<T>> edgePath;
+	int weight = 0;
+
+	Path()
+	{
+		weight  = numeric_limits<int>::max();
+	}
+
+	Path(int weightSetup)
+	{
+		weight = weightSetup;
+	}
+
+	void calculateWeight()
+	{
+		for(int i = 0; i < edgePath.size(); i++)
+			weight += edgePath[i].weight;
+	};
+
+	void addEdge(Edge<T> edgeToPush)
+	{
+		edgePath.push_back(edgeToPush);
+		calculateWeight();
+	}
+
 };
 
 template <typename T>
@@ -301,7 +333,6 @@ public:
         cout << "}";
     }
 
-
     bool isConnected()
     {
         DisjointSet disjointSet;
@@ -316,7 +347,6 @@ public:
                 disjointSet.unionSet((edge.start)->name, (edge.final)->name);
             }
         }
-        template <typename T>
         set<T> parents;
         for (auto pair: graphmap){
             auto vertex = (pair.first)->name;
@@ -329,11 +359,11 @@ public:
             cout << "No es un grafo conexo.";
             return false;
         }
-    }
+}
 
 
-
-    void depthSons(T start, set<T> &visitedNodes, stack<T> &stackClosedNodes){
+    void depthSons(T start, set<T> &visitedNodes, stack<T> &stackClosedNodes)
+    {
         visitedNodes.insert(start);
         for (auto edge: graphmap[start]){
             if (visitedNodes.find((edge.final)->name)==visitedNodes.end()){
@@ -341,10 +371,10 @@ public:
             }
         }
         stackClosedNodes.push(start);
-    };
+	};
 
 
-    bool isStronglyConnected(){
+	bool isStronglyConnected(){
         if (!dir){
             cout << "Esta operacion solo es para grafos dirigidos" << endl;
             return false;
@@ -352,10 +382,7 @@ public:
 
         if (isConnected()){
             T startNode= ((*(graphmap.begin())).first)->name;
-
-            template <typename T>
             set<T> visitedNodes;
-            template <typename T>
             stack<T> stackClosedNodes;
             for (auto pair: graphmap) {
                 auto currentNode= (pair.first)->name;
@@ -396,7 +423,7 @@ public:
 
         }
         return false;
-    };
+	};
 
     bool isBipartite()
     {
@@ -419,7 +446,7 @@ public:
             auto current = *bfsNodes.begin();
             for (auto edge: graphmap[current] ){
                 auto nextNode= edge.final;
-                if(nodeAndColor[nextNode]==NULL){
+                if(!(nodeAndColor[nextNode])){
                     nodeAndColor[nextNode] = !nodeAndColor[current];
                 }
                 else{
@@ -473,6 +500,7 @@ public:
             cout << endl;
         }
     };
+
 
     bool BFS(Node<T> * start, Node<T> * final, vector<Edge<T>>& tree){
         vector<Node<T> *> bfsNodes;
@@ -549,19 +577,32 @@ public:
         }
     }
 
+    //Segunda Entrega de Projecto.
+    Node<T>* nameToNode(T name){
+        for(auto f: graphmap){
+            if (f.first->name == name) {
+                auto node= f.first;
+                return node;
+            }
+        }
+    }
 
-    void bellmanFord(Node<T>* v){
+    map<T, int> bellmanFord(Node<T>* Node){
 
-        map<Node<T>*, int> table;
-        set<Node<T>*> reach;
-        reach.insert(v);
+        map<T, int> table;
+
+        set<T> reach;
+
+        reach.insert(Node->name);
+
         bool flag=true;
         int n;
         while(flag){
             n=reach.size();
             for (auto i: reach){
-                for(auto j: graphmap[i]){
-                    reach.insert(j);
+
+                for(auto j: graphmap[nameToNode(i)]){
+                    reach.insert((j.final)->name);
                 }
             }
             if(n==reach.size()){
@@ -569,36 +610,37 @@ public:
             }
         }
 
-        auto firstPair= make_pair(v, 0);
+        auto firstPair= make_pair(Node->name, 0);
         table.insert(firstPair);
         int inf= numeric_limits<int>::max();
 
         for (auto pair: graphmap){
-            if(pair.first!= v && reach.count(pair.first)){
-                auto newPair= make_pair(pair.first, inf);
+            if(pair.first->name!= Node->name && reach.count((pair.first)->name)){
+                auto newPair= make_pair((pair.first)->name, inf);
                 table.insert(newPair);
             }
         }
 
         for (int i=0; i<vertices-1; i++){
             for (auto vertex: table){
-                for(auto neighbor: graphmap[vertex.first]){
+                for(auto neighbor: graphmap[nameToNode(vertex.first)]){
                     if((vertex.second)!=inf){
-                    if (vertex.second + neighbor.weight< table[neighbor.final]){
-                        table[neighbor.final]= vertex.second + neighbor.weight;
-                    }
+                        if (vertex.second + neighbor.weight< table[(neighbor.final)->name]){
+                            table[(neighbor.final)->name]= vertex.second + neighbor.weight;
+                        }
                     }
                 }
             }
         }
         cout << endl << "Matriz: " << endl;
         for (auto f: table){
-            cout << f.first->name << ": " << f.second << endl;
+            cout << f.first << ": " << f.second << endl;
         }
+        return table;
+	}
 
-    }
 
-    void floydWarshall(){
+    pair<map<Node<T>*, map<Node<T>*, int>>, map<Node<T>*, map<Node<T>*, Node<T>*>>>  floydWarshall() {
         map<Node<T>*, map<Node<T>*, int>> distanceMatrix;
         map<Node<T>*, map<Node<T>*, Node<T>*>> pathMatrix;
         int inf;
@@ -615,14 +657,14 @@ public:
             for (auto verticeB: graphmap){
                 map<Node<T>*, int> temp;
                 inf = numeric_limits<int>::max();
-                auto pair2 = make_pair(verticeB.first, min);
+                auto pair2 = make_pair(verticeB.first, inf);
                 auto pair2b= make_pair(verticeB.first, vertice.first);
                 distanceMatrix[vertice.first].insert(pair2);
                 pathMatrix[vertice.first].insert(pair2b);
             }
 
             distanceMatrix[vertice.first][vertice.first]= 0;
-            pathMatrix[vertice.first][vertice.first]= nullptr;
+            pathMatrix[vertice.first][vertice.first]= vertice.first;
 
         }
 
@@ -654,7 +696,7 @@ public:
         for (auto i: distanceMatrix){
             cout << (i.first)->name << "| ";
             for (auto j: i.second){
-                cout << (j.first)->name << ": "<< j.second;
+                cout << (j.first)->name << ": "<< j.second << " ";
             }
             cout << endl;
         }
@@ -663,13 +705,133 @@ public:
         for (auto i: pathMatrix){
             cout << (i.first)->name << "| ";
             for (auto j: i.second){
-                cout << (j.first)->name << ": "<< (j.second)->name;
+                cout << (j.first)->name << ":"<< (j.second)->name<<" ";
             }
             cout << endl;
         }
-
+        auto my2Tables= make_pair(distanceMatrix, pathMatrix);
+        return my2Tables;
     }
 
+	void includeNode(vector<Node<T>*> & visitedNodes,  vector<Node<T>*> & nonVisitedNodes, Node<T> * nodeToInclude)
+	{
+		nonVisitedNodes.erase(remove(nonVisitedNodes.begin(), nonVisitedNodes.end(), nodeToInclude), nonVisitedNodes.end());
+		visitedNodes.push_back(nodeToInclude);
+	}
+
+	bool checkIfLess(vector<Node<T>*> & visitedNodes, Node<T> * nodeToCheck, map<Node<T> *, Path<T> *> shortestValueTables, int counter)
+	{
+		return (!(count(visitedNodes.begin(), visitedNodes.end(), graphmap[nodeToCheck][counter])));
+		//&& (graphmap[nodeToCheck][counter].weight + (shortestValueTables[nodeToCheck] -> weight) > shortestValueTables[graphmap[nodeToCheck][counter]]));
+	}
+
+	void updateTable(map<Node<T> *, Path<T> *> & shortestValueTables, Edge<T> edgeToAdd)
+	{
+		shortestValueTables[edgeToAdd.final] = shortestValueTables[edgeToAdd.start];
+		shortestValueTables[edgeToAdd.final] -> addEdge(edgeToAdd);
+	}
+
+	void djikstraSmallestPath(vector<Node<T> *> visitedNodes, Node<T> * smallestNodeFound, map<Node<T> *, Path<T> *> & shortestValueTables)
+	{
+		for(int i = 0; i < graphmap[smallestNodeFound].size(); i++)
+		{
+			if(checkIfLess(visitedNodes, smallestNodeFound, shortestValueTables, i))
+				updateTable(shortestValueTables, graphmap[smallestNodeFound][i]);
+		}
+
+	}
+
+	Node<T> * calculateMinimum(map<Node<T> *, Path<T> *> shortestValueTables, vector<Node<T> *> nonVisitedNodes)
+	{
+		int min = numeric_limits<int>::max();
+		Node<T> * minNode = nullptr;
+		for(int i = 0; i < nonVisitedNodes.size(); ++i)
+		{
+			if(shortestValueTables[nonVisitedNodes[i]] -> weight < min)
+			{
+				min = shortestValueTables[nonVisitedNodes[i]] -> weight;
+				minNode = nonVisitedNodes[i];
+			}
+		}
+
+		return minNode;
+	}
+
+	Path<T> * djikstraAlgorithm(Node<T> * sourceNode, Node<T> *finalNode)
+	{
+		map<Node<T> *, Path<T> *> shortestValueTables;
+		vector<Node<T> *> visitedNodes;
+		vector<Node<T> *> nonVisitedNodes;
+
+        includeNode(visitedNodes, nonVisitedNodes, sourceNode);
+        Node<T> * smallestNodeFound = sourceNode;
+
+        do
+        {
+        	djikstraSmallestPath(visitedNodes, smallestNodeFound, shortestValueTables);
+        	//smallestNodeFound = calculateMinimum(shortestValueTables, nonVisitedNodes);
+        	//includeNode(visitedNodes, nonVisitedNodes, smallestNodeFound);
+        }
+        while(smallestNodeFound);	
+
+        return shortestValueTables[finalNode];
+	}
+
+	double aStarHeuristic(Node<T> * sourceNode, Node<T> * finalNode)
+	{
+		return sqrt(pow((finalNode -> yCoordinate) - (sourceNode -> yCoordinate), 2) + pow((finalNode -> xCoordinate) - (sourceNode -> xCoordinate), 2));
+
+	}
+
+	bool aStarcheckIfLess(vector<Node<T>*> & visitedNodes, Node<T> * nodeToCheck, map<Node<T> *, Path<T> *> shortestValueTables, int counter)
+	{
+		return (!(count(visitedNodes.begin(), visitedNodes.end(), graphmap[nodeToCheck][counter])) && (graphmap[nodeToCheck][counter].weight + (shortestValueTables[nodeToCheck]) -> weight) 	> shortestValueTables[graphmap[nodeToCheck][counter]]);
+	}
+
+	void aStarSmallestPath(vector<Node<T> *> visitedNodes, Node<T> * smallestNodeFound, map<Node<T> *, Path<T> *> & shortestValueTables)
+	{
+		for(int i = 0; i < graphmap[smallestNodeFound].size(); i++)
+		{
+			if(checkIfLess(visitedNodes, smallestNodeFound, shortestValueTables, i))
+				updateTable(shortestValueTables, graphmap[smallestNodeFound][i]);
+		}
+
+	}
+
+
+	Node<T> * aStarCalculateMinimum(map<Node<T> *, Path<T> *> shortestValueTables, vector<Node<T> *> nonVisitedNodes, Node<T> * finalNode)
+	{
+		int min = numeric_limits<int>::max();
+		Node<T> * minNode = nullptr;
+		for(int i = 0; i < nonVisitedNodes.size(); ++i)
+		{
+			if(shortestValueTables[nonVisitedNodes[i]] -> weight + aStarHeuristic(nonVisitedNodes[i], finalNode) < min) //Vas por buen camino continua con esto.
+			{
+				min = shortestValueTables[nonVisitedNodes[i]] -> weight + aStarHeuristic(nonVisitedNodes[i], finalNode);
+				minNode = nonVisitedNodes[i];
+			}
+		}
+
+		return minNode;
+	}
+
+	Path<T> * aStarAlgorithm(Node<T> * sourceNode, Node<T> * finalNode)
+	{
+		map<Node<T> *, Path<T> *> shortestValueTables;
+		vector<Node<T> *> visitedNodes;
+		vector<Node<T> *> nonVisitedNodes;
+
+		for(auto const &f: graphmap)
+		{
+			shortestValueTables.first = f.first;
+			nonVisitedNodes.push_back(f.first);
+			shortestValueTables.second = new Path<T>(numeric_limits<int>::max());
+		}
+
+		includeNode(visitedNodes, nonVisitedNodes, sourceNode);
+		Node<T> * smallestNodeFound = sourceNode;
+
+	}
 
     ~Graph()
     {
@@ -677,6 +839,7 @@ public:
         edges = 0;
         graphmap.clear();
     }
+
 };
 
 #endif //GRAPHPROJECT_H
