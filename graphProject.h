@@ -10,6 +10,7 @@
 #include <stack>
 #include <limits>
 #include <algorithm>
+#include <math.h>
 #include "disjoint.h"
 
 using namespace std;
@@ -71,6 +72,11 @@ struct Path
 	vector<Edge<T>> edgePath;
 	int weight = 0;
 
+	Path()
+	{
+		weight  = numeric_limits<int>::max();
+	}
+
 	Path(int weightSetup)
 	{
 		weight = weightSetup;
@@ -85,7 +91,7 @@ struct Path
 	void addEdge(Edge<T> edgeToPush)
 	{
 		edgePath.push_back(edgeToPush);
-		this.calculateWeight();
+		calculateWeight();
 	}
 
 };
@@ -702,12 +708,14 @@ public:
 
 	bool checkIfLess(vector<Node<T>*> & visitedNodes, Node<T> * nodeToCheck, map<Node<T> *, Path<T> *> shortestValueTables, int counter)
 	{
-		return (!(count(visitedNodes.begin(), visitedNodes.end(), graphmap[nodeToCheck][counter])) && (graphmap[nodeToCheck][counter].weight + (shortestValueTables[nodeToCheck]) -> weight) > shortestValueTables[graphmap[nodeToCheck][counter]]);
+		return (!(count(visitedNodes.begin(), visitedNodes.end(), graphmap[nodeToCheck][counter])));
+		//&& (graphmap[nodeToCheck][counter].weight + (shortestValueTables[nodeToCheck] -> weight) > shortestValueTables[graphmap[nodeToCheck][counter]]));
 	}
 
 	void updateTable(map<Node<T> *, Path<T> *> & shortestValueTables, Edge<T> edgeToAdd)
 	{
-		shortestValueTables[edgeToAdd.final] = shortestValueTables[edgeToAdd.start] -> addEdge(edgeToAdd);
+		shortestValueTables[edgeToAdd.final] = shortestValueTables[edgeToAdd.start];
+		shortestValueTables[edgeToAdd.final] -> addEdge(edgeToAdd);
 	}
 
 	void djikstraSmallestPath(vector<Node<T> *> visitedNodes, Node<T> * smallestNodeFound, map<Node<T> *, Path<T> *> & shortestValueTables)
@@ -728,7 +736,7 @@ public:
 		{
 			if(shortestValueTables[nonVisitedNodes[i]] -> weight < min)
 			{
-				min = shortestValueTables[nonVisitedNodes[i]];
+				min = shortestValueTables[nonVisitedNodes[i]] -> weight;
 				minNode = nonVisitedNodes[i];
 			}
 		}
@@ -742,29 +750,73 @@ public:
 		vector<Node<T> *> visitedNodes;
 		vector<Node<T> *> nonVisitedNodes;
 
-		for (auto const &f: graphmap)
-        {
-        	shortestValueTables.first == f.first;
-        	nonVisitedNodes.push_back(f.first);
-        	shortestValueTables.second == new Path<T>(numeric_limits<int>::max());
-        }
-
         includeNode(visitedNodes, nonVisitedNodes, sourceNode);
         Node<T> * smallestNodeFound = sourceNode;
 
         do
         {
         	djikstraSmallestPath(visitedNodes, smallestNodeFound, shortestValueTables);
-        	smallestNodeFound = calculateMinimum(shortestValueTables, nonVisitedNodes);
-        	includeNode(visitedNodes, nonVisitedNodes, smallestNodeFound);
+        	//smallestNodeFound = calculateMinimum(shortestValueTables, nonVisitedNodes);
+        	//includeNode(visitedNodes, nonVisitedNodes, smallestNodeFound);
         }
         while(smallestNodeFound);	
 
         return shortestValueTables[finalNode];
 	}
 
-	Path<T> aAsterisk(Node<T> * sourceNode, Node<T> * finalNode)
+	double aStarHeuristic(Node<T> * sourceNode, Node<T> * finalNode)
 	{
+		return sqrt(pow((finalNode -> yCoordinate) - (sourceNode -> yCoordinate), 2) + pow((finalNode -> xCoordinate) - (sourceNode -> xCoordinate), 2));
+
+	}
+
+	bool aStarcheckIfLess(vector<Node<T>*> & visitedNodes, Node<T> * nodeToCheck, map<Node<T> *, Path<T> *> shortestValueTables, int counter)
+	{
+		return (!(count(visitedNodes.begin(), visitedNodes.end(), graphmap[nodeToCheck][counter])) && (graphmap[nodeToCheck][counter].weight + (shortestValueTables[nodeToCheck]) -> weight) 	> shortestValueTables[graphmap[nodeToCheck][counter]]);
+	}
+
+	void aStarSmallestPath(vector<Node<T> *> visitedNodes, Node<T> * smallestNodeFound, map<Node<T> *, Path<T> *> & shortestValueTables)
+	{
+		for(int i = 0; i < graphmap[smallestNodeFound].size(); i++)
+		{
+			if(checkIfLess(visitedNodes, smallestNodeFound, shortestValueTables, i))
+				updateTable(shortestValueTables, graphmap[smallestNodeFound][i]);
+		}
+
+	}
+
+
+	Node<T> * aStarCalculateMinimum(map<Node<T> *, Path<T> *> shortestValueTables, vector<Node<T> *> nonVisitedNodes, Node<T> * finalNode)
+	{
+		int min = numeric_limits<int>::max();
+		Node<T> * minNode = nullptr;
+		for(int i = 0; i < nonVisitedNodes.size(); ++i)
+		{
+			if(shortestValueTables[nonVisitedNodes[i]] -> weight + aStarHeuristic(nonVisitedNodes[i], finalNode) < min) //Vas por buen camino continua con esto.
+			{
+				min = shortestValueTables[nonVisitedNodes[i]] -> weight + aStarHeuristic(nonVisitedNodes[i], finalNode);
+				minNode = nonVisitedNodes[i];
+			}
+		}
+
+		return minNode;
+	}
+
+	Path<T> * aStarAlgorithm(Node<T> * sourceNode, Node<T> * finalNode)
+	{
+		map<Node<T> *, Path<T> *> shortestValueTables;
+		vector<Node<T> *> visitedNodes;
+		vector<Node<T> *> nonVisitedNodes;
+
+		for(auto const &f: graphmap)
+		{
+			shortestValueTables.first = f.first;
+			nonVisitedNodes.push_back(f.first);
+			shortestValueTables.second = new Path<T>(numeric_limits<int>::max());
+		}
+
+		includeNode(visitedNodes, nonVisitedNodes, sourceNode);
+		Node<T> * smallestNodeFound = sourceNode;
 
 	}
 
