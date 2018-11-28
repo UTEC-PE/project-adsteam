@@ -74,7 +74,7 @@ struct Path
 
     Path()
     {
-        weight  = numeric_limits<int>::max();
+        weight = numeric_limits<int>::max();
     }
 
     Path(int weightSetup)
@@ -82,8 +82,20 @@ struct Path
         weight = weightSetup;
     }
 
+    void setVector(vector<Edge<T>> vectorSetup)
+    {
+        edgePath = vectorSetup;
+    }
+
+    void setWeight(int value)
+    {
+        weight = value;
+    }
+
     void calculateWeight()
     {
+        weight = 0;
+
         for(int i = 0; i < edgePath.size(); i++)
             weight += edgePath[i].weight;
     };
@@ -92,6 +104,17 @@ struct Path
     {
         edgePath.push_back(edgeToPush);
         calculateWeight();
+    }
+
+    void reversal()
+    {
+        reverse(edgePath.begin(),edgePath.end());
+    }
+
+    void printPath()
+    {
+        for (auto f: edgePath)
+            f.printEdge();
     }
 
 };
@@ -580,10 +603,44 @@ public:
         }
     }
 
+    Edge<T> findEdgeWith(Node<T> * nodePrev, vector<Edge<T>> MST)
+    {
+        for(int i = 0; i < MST.size(); i++)
+        {
+            if(MST[i].final == nodePrev)
+            {
+                return MST[i];
+            }
+        }
+    }
 
     Path<T> * greedyBFS(Node<T> * sourceNode, Node<T>* finalNode)
     {
-        //TODO
+        vector<Node<T> *> VisitedVertex;
+        vector<Edge<T>> MST;
+        VisitedVertex.push_back(sourceNode);
+
+        do
+        {
+            MST.push_back(findMinimumEdge(VisitedVertex));
+        }while(MST[MST.size() - 1].final != finalNode);
+
+        Path<T> * greedyPath = new Path<T>();
+        Edge<T> edgeToAdd;
+
+        edgeToAdd = MST[MST.size()-1];
+        greedyPath -> addEdge(edgeToAdd);
+
+        while(edgeToAdd.start != sourceNode)
+        {
+            greedyPath -> addEdge(edgeToAdd);
+            edgeToAdd = findEdgeWith(edgeToAdd.start, MST);
+            cout << edgeToAdd.start -> name << " " << edgeToAdd.final -> name << endl;
+        }
+
+        greedyPath -> reversal();
+
+        return greedyPath;
     }
 
 
@@ -721,22 +778,25 @@ public:
 
     bool checkIfLess(vector<Node<T>*> & visitedNodes, Node<T> * nodeToCheck, map<Node<T> *, Path<T> *> shortestValueTables, int counter)
     {
-        return (!(count(visitedNodes.begin(), visitedNodes.end(), graphmap[nodeToCheck][counter])));
-        //&& (graphmap[nodeToCheck][counter].weight + (shortestValueTables[nodeToCheck] -> weight) > shortestValueTables[graphmap[nodeToCheck][counter]]));
-    }
+        return (!(count(visitedNodes.begin(), visitedNodes.end(), graphmap[nodeToCheck][counter].final)) //If not in the visited nodes.
+        && (graphmap[nodeToCheck][counter].weight + (shortestValueTables[nodeToCheck] -> weight) < shortestValueTables[graphmap[nodeToCheck][counter].final] -> weight));
+        }
 
-    void updateTable(map<Node<T> *, Path<T> *> & shortestValueTables, Edge<T> edgeToAdd)
-    {
-        shortestValueTables[edgeToAdd.final] = shortestValueTables[edgeToAdd.start];
+    void updateTable(map<Node<T> *, Path<T> *> &shortestValueTables, Edge<T> edgeToAdd)
+    {   
+        shortestValueTables[edgeToAdd.final] -> setWeight(shortestValueTables[edgeToAdd.start] -> weight);
+        shortestValueTables[edgeToAdd.final] -> setVector(shortestValueTables[edgeToAdd.start] -> edgePath);
         shortestValueTables[edgeToAdd.final] -> addEdge(edgeToAdd);
     }
 
-    void djikstraSmallestPath(vector<Node<T> *> visitedNodes, Node<T> * smallestNodeFound, map<Node<T> *, Path<T> *> & shortestValueTables)
+    void djikstraSmallestPath(vector<Node<T> *> visitedNodes, Node<T> * smallestNodeFound, map<Node<T> *, Path<T>*> &shortestValueTables)
     {
         for(int i = 0; i < graphmap[smallestNodeFound].size(); i++)
         {
             if(checkIfLess(visitedNodes, smallestNodeFound, shortestValueTables, i))
+            {
                 updateTable(shortestValueTables, graphmap[smallestNodeFound][i]);
+            }
         }
 
     }
@@ -744,16 +804,16 @@ public:
     Node<T> * calculateMinimum(map<Node<T> *, Path<T> *> shortestValueTables, vector<Node<T> *> nonVisitedNodes)
     {
         int min = numeric_limits<int>::max();
-        Node<T> * minNode = new Node();
-        for(int i = 0; i < nonVisitedNodes.size(); ++i)
+        Node<T> * minNode = nullptr;
+        for(int i = 0; i < nonVisitedNodes.size(); i++)
         {
+            //cout << shortestValueTables[nonVisitedNodes[i]] -> weight << endl;
             if(shortestValueTables[nonVisitedNodes[i]] -> weight < min)
             {
                 min = shortestValueTables[nonVisitedNodes[i]] -> weight;
                 minNode = nonVisitedNodes[i];
             }
         }
-
         return minNode;
     }
 
@@ -763,16 +823,30 @@ public:
         vector<Node<T> *> visitedNodes;
         vector<Node<T> *> nonVisitedNodes;
 
-        includeNode(visitedNodes, nonVisitedNodes, sourceNode);
         Node<T> * smallestNodeFound = sourceNode;
 
+        for(auto f: graphmap)
+        {
+            shortestValueTables[f.first] = new Path<T>();
+            nonVisitedNodes.push_back(f.first);
+        }
+
+        shortestValueTables[sourceNode] -> setWeight(0);
+        includeNode(visitedNodes, nonVisitedNodes, sourceNode);
+        
         do
         {
             djikstraSmallestPath(visitedNodes, smallestNodeFound, shortestValueTables);
             smallestNodeFound = calculateMinimum(shortestValueTables, nonVisitedNodes);
             includeNode(visitedNodes, nonVisitedNodes, smallestNodeFound);
         }
-        while(smallestNodeFound);   
+        while(smallestNodeFound);
+
+        for(auto node: shortestValueTables)
+        {
+            cout << node.first -> name << ": ";
+            cout << node.second -> weight << endl;
+        }
 
         return shortestValueTables[finalNode];
     }
@@ -785,7 +859,8 @@ public:
 
     bool aStarcheckIfLess(vector<Node<T>*> & visitedNodes, Node<T> * nodeToCheck, map<Node<T> *, Path<T> *> shortestValueTables, int counter)
     {
-        return (!(count(visitedNodes.begin(), visitedNodes.end(), graphmap[nodeToCheck][counter])) && (graphmap[nodeToCheck][counter].weight + (shortestValueTables[nodeToCheck]) -> weight)    > shortestValueTables[graphmap[nodeToCheck][counter]]);
+        return (!(count(visitedNodes.begin(), visitedNodes.end(), graphmap[nodeToCheck][counter].final))
+         && (graphmap[nodeToCheck][counter].weight + (shortestValueTables[nodeToCheck]) -> weight) < shortestValueTables[graphmap[nodeToCheck][counter].final]);
     }
 
     void aStarSmallestPath(vector<Node<T> *> visitedNodes, Node<T> * smallestNodeFound, map<Node<T> *, Path<T> *> & shortestValueTables)
@@ -795,9 +870,7 @@ public:
             if(checkIfLess(visitedNodes, smallestNodeFound, shortestValueTables, i))
                 updateTable(shortestValueTables, graphmap[smallestNodeFound][i]);
         }
-
     }
-
 
     Node<T> * aStarCalculateMinimum(map<Node<T> *, Path<T> *> shortestValueTables, vector<Node<T> *> nonVisitedNodes, Node<T> * finalNode)
     {
@@ -821,16 +894,32 @@ public:
         vector<Node<T> *> visitedNodes;
         vector<Node<T> *> nonVisitedNodes;
 
-        for(auto const &f: graphmap)
-        {
-            shortestValueTables.first = f.first;
-            nonVisitedNodes.push_back(f.first);
-            shortestValueTables.second = new Path<T>(numeric_limits<int>::max());
-        }
-
-        includeNode(visitedNodes, nonVisitedNodes, sourceNode);
         Node<T> * smallestNodeFound = sourceNode;
 
+        for(auto f: graphmap)
+        {
+            shortestValueTables[f.first] = new Path<T>();
+            nonVisitedNodes.push_back(f.first);
+        }
+
+        shortestValueTables[sourceNode] -> setWeight(0);
+        includeNode(visitedNodes, nonVisitedNodes, sourceNode);
+        
+        do
+        {
+            aStarSmallestPath(visitedNodes, smallestNodeFound, shortestValueTables);
+            smallestNodeFound = aStarCalculateMinimum(shortestValueTables, nonVisitedNodes, finalNode);
+            includeNode(visitedNodes, nonVisitedNodes, smallestNodeFound);
+        }
+        while(smallestNodeFound != finalNode || !(smallestNodeFound));
+
+        for(auto node: shortestValueTables)
+        {
+            cout << node.first -> name << ": ";
+            cout << node.second -> weight << endl;
+        }
+
+        return shortestValueTables[finalNode];
     }
 
     ~Graph()

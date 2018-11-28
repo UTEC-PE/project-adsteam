@@ -79,10 +79,25 @@ int main()
 
     TestGraph.bellmanFord(&Zero);  
 
+    cout << endl;
+
     cout << "Test de Djikstra" << endl;
     cout << "----------------" << endl;
 
     TestGraph.djikstraAlgorithm(&Zero, &One);
-    
+
+    cout << endl;
+
+    cout << "Test de A*" << endl;
+    cout << "----------" << endl;
+
+    TestGraph.aStarAlgorithm(&Zero,&One);
+
+    cout << endl;
+
+    cout << "Test de GreedyBFS" << endl;
+    cout << "-----------------" << endl;
+
+    TestGraph.greedyBFS(&Zero, &Two);
 
 }
